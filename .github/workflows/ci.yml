@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - open-source
+  pull_request:
+    branches:
+      - open-source
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Debug check
+        run: echo "This step is running"
+
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: npm-cache-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-cache-
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Configure .env
+        run: cp .env.example .env
+
+      - name: Display .env contents
+        run: cat .env
+
+      - name: Run tests
+        run: npm run test -- --maxWorkers=2

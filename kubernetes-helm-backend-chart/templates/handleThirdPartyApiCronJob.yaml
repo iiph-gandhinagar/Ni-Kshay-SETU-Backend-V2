@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: handle-third-party-api-cronjob
+spec:
+  timeZone: "{{ .Values.handleThirdPartyApi.timeZone }}"
+  schedule: "{{ .Values.handleThirdPartyApi.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: handle-third-party-api-cronjob
+              image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+              command: ["node", "dist/main.js", "handleThirdPartyApi"]
+              envFrom:
+                - configMapRef:
+                    name: nest-app-config
+          restartPolicy: OnFailure

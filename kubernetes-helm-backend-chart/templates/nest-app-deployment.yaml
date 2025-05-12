@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nest-app
+spec:
+  replicas: {{ .Values.nest_app.replicaCount }}
+  selector:
+    matchLabels:
+      app: nest-app
+  template:
+    metadata:
+      labels:
+        app: nest-app
+    spec:
+      containers:
+        - name: nest-app
+          image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+          imagePullPolicy: {{ .Values.nest_app.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.nest_app.service.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.nest_app.configMapName }}
+          resources:
+            requests:
+              cpu: {{ .Values.nest_app.resources.requests.cpu }} 
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.nest_app.readinessProbe.path }}
+              port: {{ .Values.nest_app.service.port }}
+            initialDelaySeconds: {{ .Values.nest_app.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.nest_app.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.nest_app.readinessProbe.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.nest_app.livenessProbe.path }}
+              port: {{ .Values.nest_app.service.port }}
+            initialDelaySeconds: {{ .Values.nest_app.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.nest_app.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.nest_app.livenessProbe.failureThreshold }}           
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.nest_app.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.nest_app.strategy.maxUnavailable }}

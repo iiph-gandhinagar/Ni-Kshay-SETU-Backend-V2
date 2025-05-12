@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: send-forgot-otp-cronjob
+spec:
+  timeZone: "{{ .Values.sendForgotOtp.timeZone }}"
+  schedule: "{{ .Values.sendForgotOtp.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: send-forgot-otp-cronjob
+              image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+              command: ["node", "dist/main.js", "sendForgotOtp"]
+              envFrom:
+                - configMapRef:
+                    name: nest-app-config
+          restartPolicy: OnFailure

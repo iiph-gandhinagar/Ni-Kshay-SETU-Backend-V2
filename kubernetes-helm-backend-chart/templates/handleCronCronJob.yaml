@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: handlecron-cronjob
+spec:
+  timeZone: "{{ .Values.handleCron.timeZone }}"
+  schedule: "{{ .Values.handleCron.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: handlecron-cronjob
+              image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+              command: ["node", "dist/main.js", "handleCron"]
+              envFrom:
+                - configMapRef:
+                    name: nest-app-config
+          restartPolicy: OnFailure

@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: handle-leaderboard-downfall-cronjob
+spec:
+  timeZone: "{{ .Values.handleLeaderBoardDownFall.timeZone }}"
+  schedule: "{{ .Values.handleLeaderBoardDownFall.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: handle-leaderboard-downfall-cronjob
+              image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+              command: ["node", "dist/main.js", "handleLeaderBoardDownFall"]
+              envFrom:
+                - configMapRef:
+                    name: nest-app-config
+          restartPolicy: OnFailure

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  type: {{ .Values.mongo_service.type }}
+  selector:
+    app: mongo
+  ports:
+  - name: mongo
+    port: {{ .Values.mongo_service.ports.port }}
+    targetPort: {{ .Values.mongo_service.ports.targetPort }}
+    nodePort: {{ .Values.mongo_service.ports.nodePort }}

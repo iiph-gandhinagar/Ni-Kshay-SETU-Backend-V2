@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: handle-leaderboard-pending-badge-cronjob
+spec:
+  timeZone: "{{ .Values.handleLeaderBoardPendingBadge.timeZone }}"
+  schedule: "{{ .Values.handleLeaderBoardPendingBadge.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: handle-leaderboard-pending-badge-cronjob
+              image: {{ .Values.nest_app.image.repository }}:{{ .Values.nest_app.image.tag }}
+              command: ["node", "dist/main.js", "handleLeaderBoardPendingBadge"]
+              envFrom:
+                - configMapRef:
+                    name: nest-app-config
+          restartPolicy: OnFailure

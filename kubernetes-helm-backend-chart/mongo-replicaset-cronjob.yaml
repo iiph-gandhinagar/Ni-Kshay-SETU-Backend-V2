@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-replicaset-job
+spec:
+  schedule: "*/5 * * * *" # Run every 5 minutes
+  successfulJobsHistoryLimit: 1  # Retain only the latest successful job
+  failedJobsHistoryLimit: 1      # Retain only the latest failed job
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongo-replicaset-restore
+            image: mongo:latest
+            command:
+              - /bin/bash
+              - "-c"
+              - |
+                echo "Checking replica set status..."
+                rs_status=$(mongosh --host mongo-0.mongo-service:27017 --quiet --eval "try { rs.status().ok } catch (e) { printjson(e); 0 }")
+                if [[ "$rs_status" != "1" ]]; then
+                  echo "Replica set not healthy. Forcing reconfiguration..."
+                  mongosh --host mongo-0.mongo-service:27017 --eval '
+                  cfg = rs.conf();
+                  cfg.members = [
+                    { _id: 0, host: "mongo-0.mongo-service:27017" },
+                    { _id: 1, host: "mongo-1.mongo-service:27017" }
+                  ];
+                  rs.reconfig(cfg, { force: true });
+                  '
+                else
+                  echo "Replica set is healthy.";
+                fi
+          restartPolicy: OnFailure

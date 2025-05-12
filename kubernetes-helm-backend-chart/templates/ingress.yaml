@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nest-app-ingress
+  annotations:
+    alb.ingress.kubernetes.io/group.name: "shared-lb"
+    alb.ingress.kubernetes.io/scheme: internet-facing  # Use 'internal' for internal access
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.nest_app_ingress.ingress.certificateArn }}
+spec:
+  ingressClassName: alb
+  rules:
+    - host: {{ .Values.nest_app_ingress.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nest-app
+                port:
+                  number: {{ .Values.nest_app_service.ports.port }}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: monitoring
+  annotations:
+    alb.ingress.kubernetes.io/group.name: "shared-lb"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.monitoring_ingress.ingress.certificateArn }}
+spec:
+  ingressClassName: alb
+  rules:
+    - host: {{ .Values.monitoring_ingress.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-kube-prometheus-prometheus
+                port:
+                  number: 9090

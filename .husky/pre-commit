@@ -1,0 +1,37 @@
+#!/bin/sh
+export NVM_DIR="$HOME/.nvm"
+. "$NVM_DIR/nvm.sh"
+nvm use 20
+# Define colors for output messages
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+# Helper function to check command status and print appropriate message
+check_status() {
+    if [ $1 -ne 0 ]; then
+        echo -e "${RED}❌ $2 failed. Please fix the issues before committing.${NC}" >&2
+        exit 1
+    else
+        echo -e "${GREEN}✅ $2 passed.${NC}"
+    fi
+}
+
+
+node -v # Add this line to debug
+# Run prettier
+echo -e "${YELLOW}Running Prettier...${NC}"
+npm run format
+check_status $? "Prettier formatting"
+
+# Run lint-staged
+echo -e "${YELLOW}Running lint-staged...${NC}"
+npx lint-staged
+check_status $? "Lint-staged"
+
+# Run es-lint
+echo -e "${YELLOW}Running eslint...${NC}"
+npm run lint
+check_status $? "eslint"
+

@@ -1,0 +1,163 @@
+nest_app:
+  replicaCount: 2
+  image:
+    repository:
+    tag: nest-app-v1
+    pullPolicy: Always
+  service:
+    port: 7000
+  strategy:
+    maxSurge: 50%
+    maxUnavailable: 0
+  configMapName: nest-app-config
+  resources:
+    requests:
+      cpu: '250m'
+  readinessProbe:
+    path: /api # Health check endpoint for readiness
+    initialDelaySeconds: 10 # Wait 10 seconds before starting the probe
+    periodSeconds: 5 # Check every 5 seconds
+    failureThreshold: 3 # Mark as not ready after 3 consecutive failures
+  livenessProbe:
+    path: /api # Health check endpoint for liveness
+    initialDelaySeconds: 30 # Wait 30 seconds before starting the probe
+    periodSeconds: 10 # Check every 10 seconds
+    failureThreshold: 3 # Restart the pod after 3 consecutive failures
+
+nest_app_service:
+  type: NodePort
+  selector:
+    app: nest-app
+  ports:
+    protocol: TCP
+    port: 7000
+    targetPort: 7000
+
+nest_app_config:
+  PORT: ''
+  APP_NAME: ''
+  APP_DESC: ''
+  MONGO_URL: ''
+  JWT_SECRET: ''
+  TOKEN_EXPIRY: ''
+  AWS_ACCESS_KEY_ID: ''
+  AWS_SECRET_ACCESS_KEY: ''
+  AWS_DEFAULT_REGION: ''
+  AWS_BUCKET: ''
+  AWS_URL: ''
+  SMTP_HOST: ''
+  SMTP_PORT: ''
+  SMTP_USER: ''
+  SMTP_PASS: ''
+  SMTP_ENCRYPTION: ''
+  EMAIL_FROM: ''
+  SMTP_FROM_NAME: ''
+  TEXTLOCAL_API_KEY: ''
+  SMS_API_KEY_PROMOTION: ''
+  SLACK_WEBHOOK_URL: ''
+  CHATBOT_URL: ''
+  ASSESSMENT_URL: ''
+  NTEP_URL: ''
+  MANAGE_TB_URL: ''
+  QUESTION_URL: ''
+  NTEP_CRED: ''
+  QUESTION_AUTH: ''
+  COURSE_NTEP_API: ''
+  CADRE_MAPPING_API: ''
+  FIREBASE_CREDENTIALS: ''
+  FRONTEND_URL: ''
+  BACKEND_URL: ''
+  WATI_AUTH_TOKEN: ''
+  SLACK_WEBHOOK_ALERTS_URL: ''
+  SYSTEM_QA_URL: ''
+  WATI_URL: ''
+
+nest_app_ingress:
+  ingress:
+    certificateArn: ''
+    host: ''
+
+monitoring_ingress:
+  ingress:
+    certificateArn: ''
+    host: ''
+
+mongo:
+  replicaCount: 2
+  image:
+    repository: mongo
+    tag: latest
+    pullPolicy: Always
+  service:
+    name: mongo-service
+    port: 27017
+  persistence:
+    storageClass: gp2
+    size: ''
+
+mongo_service:
+  type: NodePort
+  selector:
+    app: mongo
+  ports:
+    port: 27017
+    targetPort: 27017
+    nodePort: 31000
+
+mongo_pvc:
+  persistentVolumeClaim:
+    name: mongodb-data
+    accessMode: ReadWriteOnce
+    storage: 1Gi
+
+handleCron:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 7 * * *'
+
+closeStaleQueries:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 8 * * *'
+
+updateAssessmentScore:
+  timeZone: 'Asia/Kolkata'
+  schedule: '* * * * *'
+
+handle5DayInactivity:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 10 * * *'
+
+handle10DayInactivity:
+  timeZone: 'Asia/Kolkata'
+  schedule: '15 10 * * *'
+
+handle15DayInactivity:
+  timeZone: 'Asia/Kolkata'
+  schedule: '20 10 * * *'
+
+handleLeaderBoardDownFall:
+  timeZone: 'Asia/Kolkata'
+  schedule: '25 10 * * *'
+
+handleLeaderBoardPendingBadge:
+  timeZone: 'Asia/Kolkata'
+  schedule: '30 10 * * *'
+
+handleNewProAssessment:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 4 * * 0'
+
+handlePendingProAssessment:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 11 * * *'
+
+handleLeaderBoardUpdate:
+  timeZone: 'Asia/Kolkata'
+  schedule: '*/5 * * * *'
+
+sendForgotOtp:
+  timeZone: 'Asia/Kolkata'
+  schedule: '* * * * *'
+
+handleThirdPartyApi:
+  timeZone: 'Asia/Kolkata'
+  schedule: '0 6 * * *'

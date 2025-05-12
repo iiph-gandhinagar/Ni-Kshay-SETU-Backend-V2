@@ -1,0 +1,77 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+const {
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_BUCKET,
+  AWS_DEFAULT_REGION,
+}: any = process.env;
+
+const development = {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  region: AWS_DEFAULT_REGION,
+  bucket: AWS_BUCKET,
+  folder: {
+    adminUser: 'adminUser',
+    resourceMaterial: 'resourceMaterial',
+    certificate: 'certificate',
+    flashSimilarApp: 'flashSimilarApp',
+    tour: 'tour',
+    diagnosis: 'diagnosis',
+    treatment: 'treatment',
+    guidanceOnADR: 'guidanceOnADR',
+    latentTb: 'latentTb',
+    differentialCare: 'differentialCare',
+    cgcIntervention: 'cgcIntervention',
+    dynamicAlgo: 'dynamicAlgo',
+    staticBlog: 'staticBlog',
+    staticKeyFeature: 'staticKeyFeature',
+    staticTestimonial: 'staticTestimonial',
+    staticRelease: 'staticRelease',
+    staticWhatWeDo: 'staticWhatWeDo',
+    staticModule: 'staticModule',
+    staticResourceMaterial: 'staticResourceMaterial',
+    userProfile: 'userProfile',
+    feedback: 'feedback',
+    manageTb: 'manageTb',
+  },
+  base_url: 'http://digiflux.io/',
+  cloudfront_url: '',
+  acl: 'bucket-owner-full-control',
+};
+
+const production = {
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  region: AWS_DEFAULT_REGION,
+  bucket: AWS_BUCKET,
+  folder: {
+    adminUser: 'adminUser',
+    resourceMaterial: 'resourceMaterial',
+    certificate: 'certificate',
+    flashSimilarApp: 'flashSimilarApp',
+    tour: 'tour',
+    diagnosis: 'diagnosis',
+    treatment: 'treatment',
+    guidanceOnADR: 'guidanceOnADR',
+    latentTb: 'latentTb',
+    differentialCare: 'differentialCare',
+    cgcIntervention: 'cgcIntervention',
+    dynamicAlgo: 'dynamicAlgo',
+    staticBlog: 'staticBlog',
+    staticKeyFeature: 'staticKeyFeature',
+    staticTestimonial: 'staticTestimonial',
+    staticRelease: 'staticRelease',
+    staticWhatWeDo: 'staticWhatWeDo',
+    staticModule: 'staticModule',
+    staticResourceMaterial: 'staticResourceMaterial',
+    userProfile: 'userProfile',
+    feedback: 'feedback',
+  },
+  base_url: 'http://digiflux.io/',
+  cloudfront_url: '',
+  acl: 'bucket-owner-full-control',
+};
+
+export { development, production };
